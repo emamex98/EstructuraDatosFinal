@@ -61,6 +61,14 @@ class ImageFinder extends JPanel implements ActionListener{
     this.add(this.btDlt);
 
   }
+  
+  public void contentFolder(String f){
+	  File directory=new File(f);
+	  File[] cOF=directory.listFiles();
+	  for(File object: cOF){
+		  addImage(object);
+	  }
+  }
 
   //////////////////////////////////////////////////////////
 
@@ -68,22 +76,29 @@ class ImageFinder extends JPanel implements ActionListener{
 
     if(e.getSource() == this.btExaminar){
       JFileChooser chooser = new JFileChooser();
-
+      
       FileNameExtensionFilter filter = new FileNameExtensionFilter( "Imagenes", "jpg", "gif", "jpeg", "png");
-
+      
       chooser.setFileFilter(filter);
       int returnVal = chooser.showOpenDialog(this);
 
       if(returnVal == JFileChooser.APPROVE_OPTION) {
-        this.inputImg = chooser.getSelectedFile();
-        this.tfImagen.setText(this.inputImg.getName());
-        this.revalidate();
+    	  this.inputImg = chooser.getSelectedFile();
+          this.tfImagen.setText(this.inputImg.getName());
+          this.addImage(this.inputImg);
+          this.display.updatePanel(this.inputImg);
+          this.revalidate();
       }
     }
 
     else if(e.getSource() == this.btAdd){
-      this.addImage(this.inputImg);
-      this.display.updatePanel(this.inputImg);
+    	JFileChooser chooser=new JFileChooser();
+    	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    	int rV = chooser.showOpenDialog(this);
+    	if(rV== JFileChooser.APPROVE_OPTION){
+    		String rA = chooser.getSelectedFile().toString();
+    		this.contentFolder(rA);
+    	}
     }
 
     else if(e.getSource() == this.btSearch){
@@ -135,7 +150,7 @@ class ImageFinder extends JPanel implements ActionListener{
   //////////////////////////////////////////////////////////
 
   public void addImage(File img){
-    Key newKey = new Key(imgKeyGen(img),img);
+    Key newKey = new Key(imgKeyGen(img),img.getPath());
     finder.insertElement(newKey);
     int[] index = finder.searchElement(newKey);
     JOptionPane.showMessageDialog(null,"La imagen fue agregada exitosamente. Llave #" + imgKeyGen(img) + " - Indice: #" + index[0]);
@@ -144,7 +159,7 @@ class ImageFinder extends JPanel implements ActionListener{
   //////////////////////////////////////////////////////////
 
   public int[] searchImage(File img){
-    int[] k = finder.searchElement(new Key(imgKeyGen(img),img));
+    int[] k = finder.searchElement(new Key(imgKeyGen(img),img.getPath()));
     if(k.length == 1){
       JOptionPane.showMessageDialog(null, "Imagen encontrada en indice " + k[0] + ", llave #" + imgKeyGen(img));
       return k;
@@ -163,7 +178,7 @@ class ImageFinder extends JPanel implements ActionListener{
   ////////////////////////////////////////////////////////////
 
   public void deleteImage(File img){
-    Key imgK = new Key(imgKeyGen(img),img);
+    Key imgK = new Key(imgKeyGen(img),img.getPath());
     int[] k = finder.searchElement(imgK);
     if(k.length == 1){
       finder.deleteElement(imgK);
