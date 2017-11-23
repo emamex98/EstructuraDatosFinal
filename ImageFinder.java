@@ -24,7 +24,7 @@ import javax.swing.filechooser.*;
 class ImageFinder extends JPanel implements ActionListener{
 
   private HashT finder;
-  private File inputImg, matchImg;
+  private File inputImg, matchImg, foundImg;
 
   private JTextField tfImagen;
   private JButton btExaminar, btAdd, btSearch, btDlt, btVarias;
@@ -89,6 +89,8 @@ class ImageFinder extends JPanel implements ActionListener{
 
     else if(e.getSource() == this.btSearch){
       int result = this.searchImage(this.inputImg);
+      this.foundImg = new File(finder.getPath(result));
+      this.display.updateFound(this.foundImg);
     }
 
     else if(e.getSource() == this.btDlt){
