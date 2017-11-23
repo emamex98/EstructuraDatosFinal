@@ -27,7 +27,7 @@ class ImageFinder extends JPanel implements ActionListener{
   private File inputImg, matchImg;
 
   private JTextField tfImagen;
-  private JButton btExaminar, btAdd, btSearch, btDlt;
+  private JButton btExaminar, btAdd, btSearch, btDlt, btVarias;
 
   private ImagePanel display;
 
@@ -59,6 +59,9 @@ class ImageFinder extends JPanel implements ActionListener{
     this.btDlt.addActionListener(this);
     this.add(this.btDlt);
 
+    this.btVarias = new JButton("Varias");
+    this.btVarias.addActionListener(this);
+    this.add(this.btVarias);
   }
 
   //////////////////////////////////////////////////////////
@@ -88,9 +91,30 @@ class ImageFinder extends JPanel implements ActionListener{
       int result = this.searchImage(this.inputImg);
     }
 
-    else if(e.getSource() == this.btDlt)
+    else if(e.getSource() == this.btDlt){
       this.deleteImage(this.inputImg);
       this.display.updatePanel(null);
+    }
+    else if(e.getSource()== this.btVarias){
+        JFileChooser chooser=new JFileChooser();
+    	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    	int rV = chooser.showOpenDialog(this);
+    	if(rV== JFileChooser.APPROVE_OPTION){
+    		String rA = chooser.getSelectedFile().toString();
+    		this.contentFolder(rA);
+    	}
+    }
+
+  }
+
+  ///////////////////////////////////////////////////////////
+
+  public void contentFolder(String f){
+	  File directory=new File(f);
+	  File[] cOF=directory.listFiles();
+	  for(File object: cOF){
+		  addImage(object);
+	  }
   }
 
   ///////////////////////////////////////////////////////////
