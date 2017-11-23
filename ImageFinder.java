@@ -59,7 +59,7 @@ class ImageFinder extends JPanel implements ActionListener{
     this.btDlt.addActionListener(this);
     this.add(this.btDlt);
 
-    this.btVarias = new JButton("Varias");
+    this.btVarias = new JButton("Importar Carpeta");
     this.btVarias.addActionListener(this);
     this.add(this.btVarias);
   }
@@ -83,7 +83,7 @@ class ImageFinder extends JPanel implements ActionListener{
     }
 
     else if(e.getSource() == this.btAdd){
-      this.addImage(this.inputImg);
+      this.addImage(this.inputImg, false);
       this.display.updatePanel(this.inputImg);
     }
 
@@ -113,8 +113,9 @@ class ImageFinder extends JPanel implements ActionListener{
 	  File directory=new File(f);
 	  File[] cOF=directory.listFiles();
 	  for(File object: cOF){
-		  addImage(object);
+		  addImage(object,true);
 	  }
+    JOptionPane.showMessageDialog(null,"Se importaron las imagenes de la carpeta");
   }
 
   ///////////////////////////////////////////////////////////
@@ -156,10 +157,12 @@ class ImageFinder extends JPanel implements ActionListener{
 
   //////////////////////////////////////////////////////////
 
-  public void addImage(File img){
+  public void addImage(File img, boolean varias){
     int j = finder.insertElement(img.getParent() + "/" + img.getName());
     System.out.println("Imagen agregada en indice " + j);
-    JOptionPane.showMessageDialog(null,"La imagen fue agregada exitosamente - Indice: #" + j);
+
+    if(!varias)
+      JOptionPane.showMessageDialog(null,"La imagen fue agregada exitosamente - Indice: #" + j);
   }
 
   //////////////////////////////////////////////////////////
