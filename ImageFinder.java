@@ -1,12 +1,11 @@
 /*
-  ______ __  __          __  __ ________   _____   ___
- |  ____|  \/  |   /\   |  \/  |  ____\ \ / / _ \ / _ \
- | |__  | \  / |  /  \  | \  / | |__   \ V / (_) | (_) |
- |  __| | |\/| | / /\ \ | |\/| |  __|   > < \__, |> _ <
- | |____| |  | |/ ____ \| |  | | |____ / . \  / /| (_) |
- |______|_|  |_/_/    \_\_|  |_|______/_/ \_\/_/  \___/
-
+--------------------------------------
+Estructura de Datos, LuJu 8:30
+Proyeto Final
+--------------------------------------
 Emanuel Estrada Larios - A01633605
+Sebastian Cedeno Gonzalez
+--------------------------------------
 */
 
 import javax.swing.*;
@@ -24,7 +23,7 @@ import javax.swing.filechooser.*;
 
 class ImageFinder extends JPanel implements ActionListener{
 
-  private LinearProbeHash finder;
+  private HashT finder;
   private File inputImg, matchImg;
 
   private JTextField tfImagen;
@@ -36,10 +35,10 @@ class ImageFinder extends JPanel implements ActionListener{
     super();
     this.setPreferredSize(new Dimension(500,300));
 
-    this.finder = new LinearProbeHash(100);
+    this.finder = new HashT();
     this.display = display;
 
-    this.add(new JLabel("<html><center><br><b>Ruleta 4<br>Emanuel Estrada Larios<br>Linear Probing Hash</b><br><br>Problema: Los fot&oacute;grafos que toman fotos en eventos<br>buscan formas r&aacute;pidas de encontrar im&aacute; duplicadas<br>antes de vender sus paquetes de fotograf&iacute;cos.<br><br>Seleccione una imagen:<br><br></center></html>"));
+    this.add(new JLabel("<html> <center> <br> <b> Proyecto Final <br> Emanuel Estrada Larios <br> Sebastian Cedeno Gonzalez <br> </center></html>"));
 
     this.tfImagen = new JTextField(25);
     this.add(this.tfImagen);
@@ -61,48 +60,32 @@ class ImageFinder extends JPanel implements ActionListener{
     this.add(this.btDlt);
 
   }
-  
-  public void contentFolder(String f){
-	  File directory=new File(f);
-	  File[] cOF=directory.listFiles();
-	  for(File object: cOF){
-		  addImage(object);
-	  }
-  }
 
   //////////////////////////////////////////////////////////
 
   public void actionPerformed(ActionEvent e){
 
     if(e.getSource() == this.btExaminar){
+
       JFileChooser chooser = new JFileChooser();
-      
       FileNameExtensionFilter filter = new FileNameExtensionFilter( "Imagenes", "jpg", "gif", "jpeg", "png");
-      
       chooser.setFileFilter(filter);
       int returnVal = chooser.showOpenDialog(this);
 
       if(returnVal == JFileChooser.APPROVE_OPTION) {
-    	  this.inputImg = chooser.getSelectedFile();
-          this.tfImagen.setText(this.inputImg.getName());
-          this.addImage(this.inputImg);
-          this.display.updatePanel(this.inputImg);
-          this.revalidate();
+        this.inputImg = chooser.getSelectedFile();
+        this.tfImagen.setText(this.inputImg.getName());
+        this.revalidate();
       }
     }
 
     else if(e.getSource() == this.btAdd){
-    	JFileChooser chooser=new JFileChooser();
-    	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-    	int rV = chooser.showOpenDialog(this);
-    	if(rV== JFileChooser.APPROVE_OPTION){
-    		String rA = chooser.getSelectedFile().toString();
-    		this.contentFolder(rA);
-    	}
+      this.addImage(this.inputImg);
+      this.display.updatePanel(this.inputImg);
     }
 
     else if(e.getSource() == this.btSearch){
-      int[] result = this.searchImage(this.inputImg);
+      int result = this.searchImage(this.inputImg);
     }
 
     else if(e.getSource() == this.btDlt)
@@ -150,61 +133,72 @@ class ImageFinder extends JPanel implements ActionListener{
   //////////////////////////////////////////////////////////
 
   public void addImage(File img){
-    Key newKey = new Key(imgKeyGen(img),img.getPath());
-    finder.insertElement(newKey);
-    int[] index = finder.searchElement(newKey);
-    JOptionPane.showMessageDialog(null,"La imagen fue agregada exitosamente. Llave #" + imgKeyGen(img) + " - Indice: #" + index[0]);
+    int j = finder.insertElement(img.getParent() + "/" + img.getName());
+    System.out.println("Imagen agregada en indice " + j);
+    JOptionPane.showMessageDialog(null,"La imagen fue agregada exitosamente - Indice: #" + j);
   }
 
   //////////////////////////////////////////////////////////
 
-  public int[] searchImage(File img){
-    int[] k = finder.searchElement(new Key(imgKeyGen(img),img.getPath()));
-    if(k.length == 1){
-      JOptionPane.showMessageDialog(null, "Imagen encontrada en indice " + k[0] + ", llave #" + imgKeyGen(img));
-      return k;
+  public int searchImage(File img){
+    int j = finder.searchElement(img.getParent() + "/" + img.getName());
+
+    if(j >= 0){
+      JOptionPane.showMessageDialog(null,"Imagen encontrada en indice " + j);
+      System.out.println("Imagen encontrada en indice " + j);
+    }
+    else if(j == -65){
+      JOptionPane.showMessageDialog(null,"Imagen no encontrada");
     }
     else {
-      String similarIndexes = "";
-      for (int j = 0; j<k.length; j++){
-        if(k[j] != 0)
-          similarIndexes += k[j] + ", ";
-      }
-      JOptionPane.showMessageDialog(null, "No se encontro la imagen, imagenes similares en " + similarIndexes);
-      return k;
+      JOptionPane.showMessageDialog(null,"Imagen no encontrada, similares en indice " + j);
     }
+
+    return j;
   }
 
   ////////////////////////////////////////////////////////////
 
   public void deleteImage(File img){
-    Key imgK = new Key(imgKeyGen(img),img.getPath());
-    int[] k = finder.searchElement(imgK);
-    if(k.length == 1){
-      finder.deleteElement(imgK);
-      JOptionPane.showMessageDialog(null,"Imagen eliminada.");
-    }
-    else {
-      JOptionPane.showMessageDialog(null,"No se encontro la imagen con dicha llave.");
-    }
+    boolean deleted = finder.deleteElement(img.getParent() + "/" + img.getName());
 
+    if(deleted)
+      JOptionPane.showMessageDialog(null,"Imagen eliminada");
+    else
+      JOptionPane.showMessageDialog(null,"Imagen no encontrada");
+
+    // if(k.length != 1){
+    //   finder.deleteElement(imgK);
+    //   JOptionPane.showMessageDialog(null,"Imagen eliminada.");
+    // }
+    // else {
+    //   JOptionPane.showMessageDialog(null,"No se encontro la imagen con dicha llave.");
+    // }
+
+  }
+
+  /////
+
+  public void printTable(){
+    finder.printTable();
   }
 
   // /////////////////////////////////////////////////////////
 
   // public static void main(String[] args) {
-  //   ImageFinder ih = new ImageFinder();
+  //   ImageFinder ih = new ImageFinder(null);
   //
-  //
-  //   ih.addImage(new File("img5.jpeg"));
-  //   ih.addImage(new File("img6.jpeg"));
-  //
-  //   System.out.println(ih.searchImage(new File("img1.jpeg")));
-  //
-  //   ih.addImage(new File("img1.jpeg"));
-  //   ih.deleteImage(new File("img1.jpeg"));
-  //   System.out.println(ih.searchImage(new File("img1.jpeg")));
-  //
+  //   ih.addImage(new File("img/img1-1.jpeg"));
+  //   // //ih.addImage(new File("img/img1-2.jpeg"));
+  //   //
+  //   // ih.searchImage(new File("img/img1-1.jpeg"));
+  //   // ih.searchImage(new File("img/img1-2.jpeg"));
+  //   //
+  //   //
+  //   // ih.addImage(new File("img/img1-2.jpeg"));
+  //   // ih.deleteImage(new File("img/img1-2.jpeg"));
+  //   // ih.searchImage(new File("img/img1-2.jpeg"));
+  //   //
   // }
 
 }

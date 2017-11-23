@@ -1,22 +1,24 @@
 /*
-  ______ __  __          __  __ ________   _____   ___
- |  ____|  \/  |   /\   |  \/  |  ____\ \ / / _ \ / _ \
- | |__  | \  / |  /  \  | \  / | |__   \ V / (_) | (_) |
- |  __| | |\/| | / /\ \ | |\/| |  __|   > < \__, |> _ <
- | |____| |  | |/ ____ \| |  | | |____ / . \  / /| (_) |
- |______|_|  |_/_/    \_\_|  |_|______/_/ \_\/_/  \___/
-
+--------------------------------------
+Estructura de Datos, LuJu 8:30
+Proyeto Final
+--------------------------------------
 Emanuel Estrada Larios - A01633605
+Sebastian Cedeno Gonzalez
+--------------------------------------
 */
 
-class Key<T>{
+class Key{
 
   public int k;
-  public T data;
+  public String path, pxID;
+  public Key next;
 
-  public Key(int k, T data){
+  public Key(int k, String path, String pxID, Key next){
     this.k = k;
-    this.data = data;
+    this.path = path;
+    this.pxID = pxID;
+    this.next = next;
   }
 
 }
