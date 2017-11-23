@@ -98,6 +98,7 @@ class ImageFinder extends JPanel implements ActionListener{
     else if(e.getSource() == this.btAdd){
       this.addImage(this.inputImg, false);
       this.display.updatePanel(this.inputImg);
+      finder.printTable();
     }
 
     else if(e.getSource() == this.btSearch){
@@ -109,6 +110,7 @@ class ImageFinder extends JPanel implements ActionListener{
     else if(e.getSource() == this.btDlt){
       this.deleteImage(this.inputImg);
       this.display.updatePanel(null);
+      finder.printTable();
     }
     else if(e.getSource()== this.btVarias){
         JFileChooser chooser=new JFileChooser();
@@ -118,20 +120,27 @@ class ImageFinder extends JPanel implements ActionListener{
     		String rA = chooser.getSelectedFile().toString();
     		this.contentFolder(rA);
     	}
+      finder.printTable();
     }
     else if(e.getSource()==this.btZip){
         JFileChooser chooser=new JFileChooser();
         //FileNameExtensionFilter filter = new FileNameExtensionFilter("zip");
         //leFilter(filter);
         int returnVal = chooser.showOpenDialog(this);
+
         if(returnVal==JFileChooser.APPROVE_OPTION){
             String zip = chooser.getSelectedFile().toString();
-            String zipDes= zip.substring(0,zip.length()-4);
+            String zipDes = zip.substring(0,zip.length()-4);
+            System.out.println(chooser.getName());
+
             try {
-				unzip(zip, zipDes);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+				      this.unzip(zip, zipDes);
+              JOptionPane.showMessageDialog(null,"Se descomprimio la carpeta exitosamente");
+			      }
+            catch (IOException e1) {
+				       e1.printStackTrace();
+			      }
+
         }
 
     }
@@ -235,30 +244,15 @@ class ImageFinder extends JPanel implements ActionListener{
 
   }
 
-  /////
-
-  public void printTable(){
-    finder.printTable();
-  }
-
   // /////////////////////////////////////////////////////////
 
-  /**
-     * Size of the buffer to read/write data
-     */
-
-    /**
-     * Extracts a zip file specified by the zipFilePath to a directory specified by
-     * destDirectory (will be created if does not exists)
-     * @param zipFilePath
-     * @param destDirectory
-     * @throws IOException
-     */
     public void unzip(String zipFilePath, String destDirectory) throws IOException {
+
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
             destDir.mkdir();
         }
+
         ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
         ZipEntry entry = zipIn.getNextEntry();
         // iterates over entries in the zip file
@@ -277,12 +271,9 @@ class ImageFinder extends JPanel implements ActionListener{
         }
         zipIn.close();
     }
-    /**
-     * Extracts a zip entry (file entry)
-     * @param zipIn
-     * @param filePath
-     * @throws IOException
-     */
+
+    ///////////////////
+
     private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
         byte[] bytesIn = new byte[BUFFER_SIZE];

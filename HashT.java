@@ -21,7 +21,7 @@ import java.net.*;
 
 public class HashT{
 
-  private int m;
+  private int m, nodeNum;
   private Key[] hashTable;
 
   /////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@ public class HashT{
   public HashT(){
     this.m = 65;
     this.hashTable = new Key[this.m];
+    this.nodeNum = 0;
   }
 
   /////////////////////////////////////////////////////////
@@ -80,15 +81,19 @@ public class HashT{
 
     if(this.hashTable[j] != null){
       if(this.hashTable[j].pxID.equals(key.pxID)){
+        this.nodeNum = 0;
         return j;
       }
       else{
         Key start = this.hashTable[j].next;
+        this.nodeNum = 1;
         while(start != null){
           if(start.pxID.equals(key.pxID))
             return j;
-          else
+          else{
             start = start.next;
+            this.nodeNum++;
+          }
         }
         return -1 * j;
       }
@@ -151,17 +156,19 @@ public class HashT{
 
     for (int i=0; i<this.m; i++) {
 
+      System.out.println("*** INDICE " + i + " ***");
+
       if(this.hashTable[i] != null){
         Key start = this.hashTable[i];
-        returnString[i] = Integer.toString(start.k);
+        returnString[i] = start.path;
         start = start.next;
 
         while(start != null){
-          returnString[i] += ", " + start.k;
+          returnString[i] += ", " + start.path;
           start = start.next;
         }
 
-        System.out.println(returnString[i]);
+        System.out.println(returnString[i] + "\n");
       }
     }
 
@@ -208,12 +215,27 @@ public class HashT{
 
   }
 
+  ///////////////////////////////////////////////////////
+
   public String getPath(int j){
       String path = this.hashTable[j].path;
+
+      if(this.nodeNum != 0){
+        Key tmp = this.hashTable[j];
+        for(int i=0; i<this.nodeNum; i++){
+          tmp = tmp.next;
+        }
+        path = tmp.path;
+      }
+
       return path;
   }
 
   //////////////////////////////////////////////////////
+
+  // public int getNodeNum(){
+  //   return this.nodeNum;
+  // }
 
   // public static void main(String[] args) {
   //   HashT ht = new HashT();
