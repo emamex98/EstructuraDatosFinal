@@ -208,6 +208,11 @@ public class HashT{
 
   }
 
+  public String getPath(int j){
+      String path = this.hashTable[j].path;
+      return path;
+  }
+
   //////////////////////////////////////////////////////
 
   // public static void main(String[] args) {

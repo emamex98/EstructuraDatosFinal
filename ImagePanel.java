@@ -23,14 +23,14 @@ import java.awt.Graphics;
 
 class ImagePanel extends JPanel {
 
-  private BufferedImage inputImg;
+  private BufferedImage inputImg, foundImg;
 
   public ImagePanel(){
     super();
 
     this.setPreferredSize(new Dimension(500,300));
 
-    this.inputImg = null;
+    this.inputImg = this.foundImg = null;
   }
 
   public void paintComponent(Graphics g){
@@ -39,13 +39,22 @@ class ImagePanel extends JPanel {
     Graphics2D g2 = (Graphics2D) g;
 
     if(this.inputImg != null)
-      g2.drawImage(this.inputImg,5,5,490,290,null);
+      g2.drawImage(this.inputImg,5,5,245,145,null);
+      g2.drawImage(this.foundImg,251,5,245,145,null);
 
   }
 
   public void updatePanel(File img){
     try{
       this.inputImg = ImageIO.read(img);
+      this.repaint();
+    }
+    catch (IOException e) {  System.out.println("Error"); }
+  }
+
+  public void updateFound(File img){
+    try{
+      this.foundImg = ImageIO.read(img);
       this.repaint();
     }
     catch (IOException e) {  System.out.println("Error"); }
